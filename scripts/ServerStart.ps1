@@ -91,10 +91,10 @@ function CheckJava {
     $bitness = & $JAVA_PATH -XshowSettings:properties -version 2>&1 | Select-String -Pattern sun.arch.data.model | ConvertFrom-StringData
     $bitness.GetEnumerator() | ForEach-Object {
         if ($_.Value -eq 64) {
-            WriteToLog "INFO: Found 64-bit Java $($Version)"
+            WriteToLog "INFO: Found 64-bit Java $($version)"
         }
         else {
-            WriteToLog "INFO: Found 32-bit Java $($Version)"
+            WriteToLog "INFO: Found 32-bit Java $($version)"
             Write-Host "ERROR: 32-bit java version found. Please install 64-bit java." -ForegroundColor red
             $errored = $true
         }

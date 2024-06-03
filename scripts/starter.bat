@@ -1,0 +1,1 @@
+Powershell.exe -executionpolicy bypass -File "%~dp0ServerStart.ps1"

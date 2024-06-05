@@ -57,6 +57,7 @@ function ExitError {
     Read-Host -Prompt "The above error occurred. Press Enter to exit"
     exit
 }
+
 function WriteToLog {
     param (
         [Parameter(Mandatory = $true)]
@@ -64,6 +65,9 @@ function WriteToLog {
         [bool]$CreateFile
     )
     if ($CreateFile) {
+        if (-not (Test-Path $PSScriptRoot/"logs")) {
+            New-Item -Path $PSScriptRoot -Name "logs" -ItemType "directory" | Out-Null
+        }
         Write-Output $Message | Out-File -FilePath $PSScriptRoot/"logs/serverstart.log"
     }
     else {
@@ -329,9 +333,6 @@ $dateTime = Get-Date
 do {
     Clear-Host
     ### Initial setup ###
-    if (-not (Test-Path $PSScriptRoot/"logs")) {
-        New-Item -Path $PSScriptRoot -Name "logs" -ItemType "directory" | Out-Null
-    }
     WriteToLog -Message "--------------------------" -CreateFile $true
     WriteToLog "Starting ServerStart.ps1"
     WriteToLog "--------------------------`n"

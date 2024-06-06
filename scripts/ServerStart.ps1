@@ -47,6 +47,7 @@ $settings = $null
 $useCleanroom = $null
 $LOADER_NAME = $null
 $LOADER_VER = $null
+$MC_VER = $null
 $JAVA_ARGS = $null
 $JAVA_PATH = $null
 $JAR_NAME = $null
@@ -220,13 +221,13 @@ function CheckSetup {
     $reinstall = $false
     $jarName = $null
     # Check a loader is installed
-    if (-not (Test-Path $PSScriptRoot/"minecraft_server.$($settings["MC_VER"]).jar")) {
+    if (-not (Test-Path $PSScriptRoot/"minecraft_server.$($MC_VER).jar")) {
         Write-Host "Minecraft binary not found, installing $($LOADER_NAME)..." -ForegroundColor yellow
         WriteToLog "INFO: Minecraft binary not found, installing $($LOADER_NAME)..."
         $reinstall = $true
     }
     else {
-        $vanilla = "$($PSScriptRoot)/minecraft_server.$($settings["MC_VER"]).jar"
+        $vanilla = "$($PSScriptRoot)/minecraft_server.$($MC_VER).jar"
     }
     # Check libraries for proper loader install
     if (-not (Test-Path $PSScriptRoot/"libraries")) {
@@ -236,8 +237,8 @@ function CheckSetup {
     }
     else {
         $libs = "$($PSScriptRoot)/libraries"
-        if (Test-Path $PSScriptRoot/"forge-$($settings["MC_VER"])-$($LOADER_VER).jar") {
-            $forge = "$($PSScriptRoot)/forge-$($settings["MC_VER"])-$($LOADER_VER).jar"
+        if (Test-Path $PSScriptRoot/"forge-$($MC_VER)-$($LOADER_VER).jar") {
+            $forge = "$($PSScriptRoot)/forge-$($MC_VER)-$($LOADER_VER).jar"
         }
         if (Test-Path $PSScriptRoot/"cleanroom-$($LOADER_VER).jar") {
             $cleanroom = "$($PSScriptRoot)/cleanroom-$($LOADER_VER).jar"
@@ -252,8 +253,8 @@ function CheckSetup {
         # Check for existing Cleanroom
         if ($useCleanroom -and ($null -eq $cleanroom)) {
             # Found Forge, remove it as we want Cleanroom
-            if (Test-Path "$($PSScriptRoot)/forge-$($settings["MC_VER"])-$($settings["FORGE_VER"]).jar") {
-                Remove-Item "$($PSScriptRoot)/forge-$($settings["MC_VER"])-$($settings["FORGE_VER"]).jar"
+            if (Test-Path "$($PSScriptRoot)/forge-$($MC_VER)-$($settings["FORGE_VER"]).jar") {
+                Remove-Item "$($PSScriptRoot)/forge-$($MC_VER)-$($settings["FORGE_VER"]).jar"
             }
             $reinstall = $true
         }
@@ -271,7 +272,7 @@ function CheckSetup {
         $jarName = "$($PSScriptRoot)/cleanroom-$($settings["CLEANROOM_VER"]).jar"
     }
     else {
-        $jarName = "$($PSScriptRoot)/forge-$($settings["MC_VER"])-$($settings["FORGE_VER"]).jar"
+        $jarName = "$($PSScriptRoot)/forge-$($MC_VER)-$($settings["FORGE_VER"]).jar"
     }
     if ($reinstall) {
         ReinstallLoader -Vanilla $vanilla -Libs $libs -Forge $forge -Cleanroom $cleanroom -IsOnline $IsOnline
@@ -369,6 +370,9 @@ do {
         Write-Error "MC_VER is invalid: MC_VER=$($settings["MC_VER"])"
         ExitError
     }
+    else {
+        $MC_VER = $settings["MC_VER"]
+    }
     # Read IGNORE_OFFLINE option
     if (-not ([bool]::TryParse($settings["IGNORE_OFFLINE"], [ref]$OFFLINE))) {
         Write-Error "IGNORE_OFFLINE must be 'true' or 'false': IGNORE_OFFLINE=$($settings["IGNORE_OFFLINE"])"
@@ -376,7 +380,7 @@ do {
     }
     
     Write-Host "`n*** Loading $($PACK_NAME) Server ***"
-    Write-Host "Running $($LOADER_NAME) $($LOADER_VER) for Minecraft $($settings["MC_VER"])`n"
+    Write-Host "Running $($LOADER_NAME) $($LOADER_VER) for Minecraft $($MC_VER)`n"
     
     Write-Host ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
     Write-Host "            Minecraft-Forge/Cleanroom Server install/launcher script"

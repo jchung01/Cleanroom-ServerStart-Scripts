@@ -1,14 +1,18 @@
 # Cleanroom ServerStart Scripts
-Server installation/start scripts for MC 1.12, using Forge or Cleanroom
+Server installation/start scripts for MC 1.12.2, using Forge or Cleanroom
 
 These scripts will run a Forge or Cleanroom server, automatically installing the desired loader if necessary. Some code and this README is based off of the AllTheMods [ServerStart scripts](https://github.com/AllTheMods/Server-Scripts).
 
-Originally created for use in the "MeatballCraft" modpack, but is free for anyone to use, modify or distribute under the MIT license. Borrowed code from AllTheMods falls under [their custom license](./LICENSE_AllTheMods.md).
+Originally created for use in the [MeatballCraft](https://www.curseforge.com/minecraft/modpacks/meatballcraft) modpack, but is free for anyone to use, modify or distribute under the MIT license. Borrowed code from AllTheMods falls under [their custom license](./LICENSE_AllTheMods.md).
 
 ## How to Use
+Copy-paste/drop the contents of `/scripts` into your main server folder.
+
 **Do not modify ServerStart.bat or ServerStart.sh!** (unless you know what you are doing)  
 All settings are modified in `settings.cfg` instead.  
-If you would like to use Cleanroom Loader, set `USE_CLEANROOM` to `true`. You may need to specify the `JAVA_PATH` setting as well to point to your Java 22 installation.
+**If you would like to use Cleanroom Loader, set `USE_CLEANROOM` to `true`.** You may need to specify the `JAVA_PATH` setting as well to point to your Java 22 installation.
+
+As always, make sure you have the latest/matching Fugue and Scalar versions when using Cleanroom!
 
 ### Arguments
 | Setting   | Description                |
@@ -24,8 +28,8 @@ Either way, they do the same thing.
 
 ### Linux/Mac
 You have two options:
-1) `ServerStart.sh`[^1] Run from terminal[^2].
-2) `ServerStart.ps1` This requires you to have [cross-platform Powershell](https://github.com/PowerShell/PowerShell?tab=readme-ov-file#get-powershell). I haven't tested this, but it should work.
+1) `ServerStart.sh`[^1] Run from terminal.[^2]
+2) `ServerStart.ps1` This requires you to have [cross-platform Powershell](https://github.com/PowerShell/PowerShell?tab=readme-ov-file#get-powershell) installed. I haven't tested this, but it should work.
 
 [^1]: The .sh script relies on Bash. Please make sure you have Bash.  
 [^2]: You may need to run `chmod +x ServerStart.sh` before executing.
@@ -52,12 +56,12 @@ Formatting is very important for it to load correctly:
 | **DEFAULT_WORLD_TYPE** | Allows for changing the type of world used.  | `BIOMESOP` |
 | **MCVER** | Target Minecraft version. Usually set by pack dev before distributing and not intended to be changed by end-users. Must be complete/exact and matching the version on Forge's website (i.e. `1.12` is not the same as `1.12.2`) | `1.12.2` |
 | **FORGEVER** | Target Forge version. Provided here for legacy purposes and **will not do anything**, as version 2860 will always be downloaded | `14.23.5.2860` | 
-| **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is in the assets for each Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.2.2-alpha` |
+| **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is for the targeted Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.2.2-alpha` |
 
 ## Optional Java Arguments
 The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 22. Most arguments provided are to set Java 8 defaults closer to Java 22 defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_PATH` with the below ones if you want to use them.
 
-**Please keep in mind** that java arguments are **not** what mainly determines your performance; optimization mods are! Check out the [Opticraft page](https://red-studio-ragnarok.github.io/Opticraft/) for generally good optimization mods for 1.12.2. Arguments are hard to test correctly, so don't expect much, if any, performance improvements from changing them!
+**Please keep in mind** that java arguments are **not** what mainly determines your performance (especially for Java 8); optimization mods are! Check out the [Opticraft page](https://red-studio-ragnarok.github.io/Opticraft/) for generally good optimization mods for 1.12.2. Arguments are hard to test correctly, so don't expect much, if any, performance improvements from changing them!
 
 Default option:
 ```
@@ -67,13 +71,13 @@ Default option:
 ### Java 8
 Option 1:
 ``` 
--XX:+AggressiveOpts -XX:ParallelGCThreads=3 -XX:+UseConcMarkSweepGC -XX:+UnlockExperimentalVMOptions -XX:+UseParNewGC -XX:+ExplicitGCInvokesConcurrent -XX:MaxGCPauseMillis=10 -XX:GCPauseIntervalMillis=50 -XX:+UseFastAccessorMethods -XX:+OptimizeStringConcat -XX:NewSize=84m -XX:+UseAdaptiveGCBoundary -XX:NewRatio=3 -Dfml.readTimeout=90 -Dfml.queryResult=confirm 
+-server -XX:+AggressiveOpts -XX:ParallelGCThreads=3 -XX:+UseConcMarkSweepGC -XX:+UnlockExperimentalVMOptions -XX:+UseParNewGC -XX:+ExplicitGCInvokesConcurrent -XX:MaxGCPauseMillis=10 -XX:GCPauseIntervalMillis=50 -XX:+UseFastAccessorMethods -XX:+OptimizeStringConcat -XX:NewSize=84m -XX:+UseAdaptiveGCBoundary -XX:NewRatio=3 -Dfml.readTimeout=90 -Dfml.queryResult=confirm 
 ```
 This is what's provided by the AllTheMods server scripts. It uses the ParNew/CMS garbage collectors, which are the default ones used by MC in Java 8.  
 
 Option 2:
 ```
--XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=400M -XX:NonNMethodCodeHeapSize=12M -XX:ProfiledCodeHeapSize=194M -XX:NonProfiledCodeHeapSize=194M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseVectorCmov -XX:+PerfDisableSharedMem -XX:+UseFastUnorderedTimeStamps -XX:+UseCriticalJavaThreadPriority -XX:ThreadPriorityPolicy=1 -XX:AllocatePrefetchStyle=3 -XX:+UseG1GC -XX:MaxGCPauseMillis=130 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=28 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=3 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+-server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:MaxInlineLevel=15 -XX:MaxVectorSize=32 -XX:+UseCompressedOops -XX:ThreadPriorityPolicy=1 -XX:+UseDynamicNumberOfGCThreads -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=350M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseFPUForSpilling -XX:+UseG1GC -XX:MaxGCPauseMillis=130 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=28 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=3 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
 This is a list made from this [repo](https://github.com/Mukul1127/Minecraft-Performance-Flags-Benchmarks/tree/main). It uses G1GC, like the default set of args, with [Aikar's well-known server arguments](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/) but it has more fine-tuning args that **are untested**, so take these with a grain of salt.
 

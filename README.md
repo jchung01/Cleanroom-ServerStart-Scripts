@@ -5,6 +5,8 @@ These scripts will run a Forge or Cleanroom server, automatically installing the
 
 Originally created for use in the [MeatballCraft](https://www.curseforge.com/minecraft/modpacks/meatballcraft) modpack, but is free for anyone to use, modify or distribute under the MIT license. Borrowed code from AllTheMods falls under [their custom license](./LICENSE_AllTheMods.md).
 
+Make sure you're using 64-bit Java and the right version for the right modloader! Java 8 for Forge, Java 21/22 for Cleanroom.
+
 ## How to Use
 Copy-paste/drop the contents of `/scripts` into your main server folder.
 

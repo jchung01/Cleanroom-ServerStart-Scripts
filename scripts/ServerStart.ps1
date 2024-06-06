@@ -387,7 +387,7 @@ do {
     Write-Host "   (Created by ChaosStrikez, adapted from the 'All The Mods' ServerStart script)"
     Write-Host ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
     Write-Host "`nThis script will launch a Minecraft Modded server, runnning Forge or Cleanroom"
-    Write-Host "`nSource: GITHUB_LINK_HERE"
+    Write-Host "`nSource: https://github.com/jchung01/Cleanroom-ServerStart-Scripts"
     Write-Host "`nThis was originally made for the MeatballCraft modpack, Links here;"
     Write-Host "  Curseforge: https://www.curseforge.com/minecraft/modpacks/meatballcraft"
     Write-Host "  MeatballCraft Discord: https://discord.com/invite/WVvVm7aWh3`n"

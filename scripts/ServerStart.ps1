@@ -397,7 +397,7 @@ do {
         ExitError
     }
     # Read JAVA_PATH
-    if ("DISABLE" -ne $settings["JAVA_PATH"]) {
+    if ((![string]::IsNullOrWhitespace($settings["JAVA_PATH"])) -and ("DISABLE" -ne $settings["JAVA_PATH"])) {
         $JAVA_PATH = [string]$settings["JAVA_PATH"] -replace '"', ''
     }
     else {
@@ -422,7 +422,7 @@ do {
     do {
         $host.UI.RawUI.WindowTitle = "$($PACK_NAME) Server Running"
         Write-Host "Starting $($PACK_NAME) Server..." -ForegroundColor yellow
-        WriteToLog "INFO: Starting Server..."
+        WriteToLog "INFO: Starting Server at $($dateTime)..."
         Write-Host "Attempting to execute [ `"$($JAVA_PATH)`" $($JAVA_ARGS) -jar `"$($JAR_NAME)`" $($settings["GAME_ARGS"]) ]`n"
         WriteToLog "DEBUG: Attempting to execute [ `"$($JAVA_PATH)`" $($JAVA_ARGS) -jar `"$($JAR_NAME)`" $($settings["GAME_ARGS"]) ]"
         Start-Process -FilePath "$($JAVA_PATH)" -ArgumentList "$($JAVA_ARGS) -jar `"$($JAR_NAME)`" $($settings["GAME_ARGS"])" -NoNewWindow -Wait

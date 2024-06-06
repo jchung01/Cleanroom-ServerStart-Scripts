@@ -4,7 +4,7 @@
 # Make sure this is running as BASH.
 # You might need to chmod +x before executing.
 #
-# *** THIS FILE IS NOT INTENDED TO BE EDITED, USE "settingsNew.cfg" INSTEAD ***
+# *** THIS FILE IS NOT INTENDED TO BE EDITED, USE "settings.cfg" INSTEAD ***
 #
 # The below license is provided as some code is taken from the "All The Mods Team".
 # All other code is subject to MIT license.
@@ -317,12 +317,12 @@ while true; do
     write_to_log $'--------------------------\n'
     
     # Read settings.cfg
-    if [[ ! -f "${SCRIPT_ROOT}settingsnew.cfg" ]]; then
-        cat "${SCRIPT_ROOT}settingsNew.cfg"
+    if [[ ! -f "${SCRIPT_ROOT}settings.cfg" ]]; then
+        cat "${SCRIPT_ROOT}settings.cfg"
         exit_error
     fi
     write_to_log $'DEBUG: settings.cfg Found. Logging full contents below:\n--------------------------'
-    cat "${SCRIPT_ROOT}settingsNew.cfg" >> "${SCRIPT_ROOT}logs/serverstart.log"
+    cat "${SCRIPT_ROOT}settings.cfg" >> "${SCRIPT_ROOT}logs/serverstart.log"
     write_to_log '--------------------------'
     #Read the config file line by line
     while IFS=$'\n\r' read -r line || [[ -n "$line" ]]; do
@@ -337,7 +337,7 @@ while true; do
             shopt -u extglob
             settings["$key"]="$value"
         fi
-    done < "${SCRIPT_ROOT}settingsNew.cfg"
+    done < "${SCRIPT_ROOT}settings.cfg"
     # Read MODPACK_NAME option
     PACK_NAME="${settings["MODPACK_NAME"]}"
     # Read USE_CLEANROOM option

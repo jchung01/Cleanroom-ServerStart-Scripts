@@ -7,7 +7,7 @@ If you are using Windows, either run this file with right-click -> "Run with Pow
 or use starter.bat.
 If you're not using Windows and don't have Powershell installed, use ServerStart.sh.
 
-*** THIS FILE IS NOT INTENDED TO BE EDITED, USE "settingsNew.cfg" INSTEAD ***
+*** THIS FILE IS NOT INTENDED TO BE EDITED, USE "settings.cfg" INSTEAD ***
 
 The below license is provided as some code is taken from the "All The Mods Team".
 All other code is subject to MIT license.
@@ -339,14 +339,14 @@ do {
     WriteToLog "--------------------------`n"
     
     # Read settings.cfg
-    if (-not (Test-Path $PSScriptRoot/"settingsNew.cfg")) {
-        Get-Content $PSScriptRoot/"settingsNew.cfg"
+    if (-not (Test-Path $PSScriptRoot/"settings.cfg")) {
+        Get-Content $PSScriptRoot/"settings.cfg"
         ExitError
     }
     WriteToLog "DEBUG: settings.cfg Found. Logging full contents below:`n--------------------------"
-    Get-Content $PSScriptRoot/"settingsNew.cfg" | Out-File -FilePath $PSScriptRoot/"logs/serverstart.log" -Append
+    Get-Content $PSScriptRoot/"settings.cfg" | Out-File -FilePath $PSScriptRoot/"logs/serverstart.log" -Append
     WriteToLog "--------------------------"
-    $settings = Get-Content $PSScriptRoot/"settingsNew.cfg" | Where-Object {$_ -notmatch '^\s*#' -and $_ -match '='}
+    $settings = Get-Content $PSScriptRoot/"settings.cfg" | Where-Object {$_ -notmatch '^\s*#' -and $_ -match '='}
     $settings = $settings -replace '\\', '\\' -join "`n" | ConvertFrom-StringData
     
     # Read MODPACK_NAME option

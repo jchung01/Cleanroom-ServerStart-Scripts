@@ -14,7 +14,7 @@ Copy-paste/drop the contents of `/scripts` into your main server folder.
 All settings are modified in `settings.cfg` instead.  
 **If you would like to use Cleanroom Loader, set `USE_CLEANROOM` to `true`.** You may need to specify the `JAVA_PATH` setting as well to point to your Java 22 installation.
 
-As always, make sure you have the latest/matching Fugue and Scalar versions when using Cleanroom!
+As always, make sure you have the latest/matching Fugue and Scalar versions when using Cleanroom! Also, you may need to disable/remove MixinBooter and ConfigAnytime as Cleanroom already bundles these mods and you will get a duplicate mod error.
 
 ### Arguments
 | Setting   | Description                |

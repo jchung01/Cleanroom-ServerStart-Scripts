@@ -422,6 +422,13 @@ while true; do
         fi
     fi
     check_setup "$online"
+    while true; do
+        case $1 in
+            -i|--install|install) exit ;;
+            *) break ;;
+        esac
+        shift
+    done
     ### Start ###
     echo -e "${YELLOW}Starting $PACK_NAME Server...${RESET}"
     write_to_log 'INFO: Starting Server...'

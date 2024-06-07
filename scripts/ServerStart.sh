@@ -308,6 +308,10 @@ declare -i secs
 restartEntire=false
 printf -v dateTime '%(%Y-%m-%d %H:%M:%S)T' -1 
 printf -v rawTime '%(%s)T' -1
+if [[ ! (${BASH_VERSINFO[0]} -ge 4 && ${BASH_VERSINFO[1]} -ge 2) ]]; then
+    echo 'Bash 4.2 or greater is required for this script. Please update to 4.2 or greater.'
+    exit_error
+fi
 while true; do
     clear
     ### Initial setup ###
@@ -323,9 +327,9 @@ while true; do
     write_to_log $'DEBUG: settings.cfg Found. Logging full contents below:\n--------------------------'
     cat "${scriptRoot}settings.cfg" >> "${scriptRoot}logs/serverstart.log"
     write_to_log '--------------------------'
-    #Read the config file line by line
+    # Read the config file line by line
     while IFS=$'\n\r' read -r line || [[ -n "$line" ]]; do
-        #Fliters out comments and empty lines
+        # Filters out comments and empty lines
         if [[ ${line:0:1} != '#' ]] && [[ $line = *[!\ ]* ]]; then
             key="${line%%=*}"
             value="${line#*=}"
@@ -414,7 +418,7 @@ while true; do
     done
     # Read CRASH_TIMER option
     crashTimer=${settings["CRASH_TIMER"]}
-    # ### Various checks ###
+    ### Various checks ###
     check_java
     online=false
     if [[ $offline == true ]]; then
@@ -445,7 +449,7 @@ while true; do
     # Check if we should restart the run
     echo
     echo -e "${YELLOW}$packName Server was stopped (possibly crashed)...${RESET}"
-    # check_eula
+    check_eula
     printf -v dateTimeNow '%(%Y-%m-%d %H:%M:%S)T' -1 
     printf -v rawTimeNow '%(%s)T' -1
     days=("$rawTimeNow" - "$rawTime")/86400

@@ -33,7 +33,7 @@ You have two options:
 1) `ServerStart.sh`[^1] Run from terminal.[^2]
 2) `ServerStart.ps1` This requires you to have [cross-platform Powershell](https://github.com/PowerShell/PowerShell?tab=readme-ov-file#get-powershell) installed. I haven't tested this, but it should work.
 
-[^1]: The .sh script relies on Bash. Please make sure you have Bash.  
+[^1]: The .sh script relies on Bash 4.2 or greater. Please make sure you have Bash 4.2+ installed.
 [^2]: You may need to run `chmod +x ServerStart.sh` before executing.
 
 ## settings.cfg

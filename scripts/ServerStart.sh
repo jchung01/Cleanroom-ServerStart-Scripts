@@ -41,22 +41,23 @@
 # ================================================================================
 
 # Specific to .sh
-SCRIPT_ROOT="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/"
+scriptRoot="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/"
 RED="$(tput setaf 1)"
 YELLOW="$(tput setaf 3)"
 RESET="$(tput sgr0)"
 
-declare -A settings=
+declare -A settings
+declare -a javaArgs
+declare -a gameArgs
 useCleanroom=
-LOADER_NAME=
-LOADER_VER=
-MC_VER=
-JAVA_ARGS=
-JAVA_PATH=
-JAR_NAME=
-PACK_NAME=
-CRASH_TIMER=
-OFFLINE=
+loaderName=
+loaderVer=
+mcVer=
+javaPath=
+jarName=
+packName=
+crashTimer=
+offline=
 
 function exit_error {
     read -srp "The above error occurred. Press any key to exit" -n 1 
@@ -68,22 +69,22 @@ function write_to_log {
     # $2 = (Optional) CreateFile
     # Create file
     if [[ $2 == true ]]; then
-        if [[ ! -d "${SCRIPT_ROOT}logs/" ]]; then
-            mkdir "${SCRIPT_ROOT}logs/"
+        if [[ ! -d "${scriptRoot}logs/" ]]; then
+            mkdir "${scriptRoot}logs/"
         fi
-        printf '%s\n' "$1" > "${SCRIPT_ROOT}logs/serverstart.log"
+        printf '%s\n' "$1" > "${scriptRoot}logs/serverstart.log"
     else
-        printf '%s\n' "$1" >> "${SCRIPT_ROOT}logs/serverstart.log"
+        printf '%s\n' "$1" >> "${scriptRoot}logs/serverstart.log"
     fi
 }
 
 function check_java {
     echo -e "${YELLOW}Checking java installation...${RESET}"
     local version
-    version=$("$JAVA_PATH" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+    version=$("$javaPath" -version 2>&1 | awk -F '"' '/version/ {print $2}')
     local errored=false
-    "$JAVA_PATH" -version
-    write_to_log "DEBUG: JAVA version output: $("$JAVA_PATH" -version 2>&1)"
+    "$javaPath" -version
+    write_to_log "DEBUG: JAVA version output: $("$javaPath" -version 2>&1)"
     if [[ $useCleanroom == true && ! ($version =~ ^"22".*) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"
         echo -e "${RED}Using Cleanroom, which requires Java 22, but found $version.\nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg.${RESET}"
@@ -95,7 +96,7 @@ function check_java {
     fi
 
     local bitness
-    bitness=$("$JAVA_PATH" -XshowSettings:properties -version 2>&1 | grep "sun.arch.data.model" | awk -F '=' '{printf $2+0}')
+    bitness=$("$javaPath" -XshowSettings:properties -version 2>&1 | grep "sun.arch.data.model" | awk -F '=' '{printf $2+0}')
     if [[ $bitness -eq 64 ]]; then
         write_to_log "INFO: Found 64-bit Java $version"
     else
@@ -147,24 +148,24 @@ function reinstall_loader {
     # $5 = IsOnline
 
     # Clean files: vanilla jar, loader jar, libraries folder
-    echo -e "${YELLOW}Clearing old files before installing $LOADER_NAME/minecraft...${RESET}"
-    write_to_log "INFO: Clearing and installing ${LOADER_NAME}/minecraft..."
+    echo -e "${YELLOW}Clearing old files before installing $loaderName/minecraft...${RESET}"
+    write_to_log "INFO: Clearing and installing ${loaderName}/minecraft..."
     local param
     for param in "${@:1:${#@}-1}"; do
         if [[ -n "$param" ]]; then
-            if [[ $param == "${SCRIPT_ROOT}libraries" ]]; then
+            if [[ $param == "${scriptRoot}libraries" ]]; then
                 rm -r "$param"
             else
                 rm "$param"
             fi
         fi
     done
-    if [[ -f "${SCRIPT_ROOT}installer-$LOADER_NAME-$LOADER_VER.jar" ]]; then
-        echo "Existing $LOADER_NAME installer already found..."
+    if [[ -f "${scriptRoot}installer-$loaderName-$loaderVer.jar" ]]; then
+        echo "Existing $loaderName installer already found..."
 	    echo 'Default is to use this installer and not re-download'
     # Download installer
     else
-        if [[ $OFFLINE == true && ($5 == false) ]]; then
+        if [[ $offline == true && ($5 == false) ]]; then
             echo -e "${RED}IGNORE_OFFLINE is set to true, please set it to false and ensure you have an internet connection to download the installer.${RESET}"
             write_to_log 'ERROR: IGNORE_OFFLINE is set to true, please set it to false and ensure you have an internet connection to download the installer.'
             exit_error
@@ -172,7 +173,7 @@ function reinstall_loader {
         local source
         if [[ $useCleanroom == true ]]; then
             # If the format changes this URL might need to be changed
-            source="https://github.com/CleanroomMC/Cleanroom/releases/download/$LOADER_VER/cleanroom-$LOADER_VER-installer.jar"
+            source="https://github.com/CleanroomMC/Cleanroom/releases/download/$loaderVer/cleanroom-$loaderVer-installer.jar"
         else
             # Hard coded, Forge shouldn't change
             source='https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2860/forge-1.12.2-14.23.5.2860-installer.jar'
@@ -180,10 +181,10 @@ function reinstall_loader {
         # Check for commands, then do the download
         if (command -v curl >> /dev/null 2>&1); then
             write_to_log "DEBUG: (curl) Downloading $source"
-            curl -JL "$source" -o "${SCRIPT_ROOT}installer-$LOADER_NAME-$LOADER_VER.jar" >> "${SCRIPT_ROOT}logs/serverstart.log" 2>&1
+            curl -JL "$source" -o "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
         elif (command -v wget >> /dev/null 2>&1); then
             write_to_log "DEBUG: (wget) Downloading ${source}"
-            wget "$source" -o "${SCRIPT_ROOT}installer-$LOADER_NAME-$LOADER_VER.jar" >> "${SCRIPT_ROOT}logs/serverstart.log" 2>&1
+            wget "$source" -o "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
         else
             echo -e "${RED}Neither wget or curl were found on your system. Please install one and try again${RESET}"
             write_to_log 'ERROR: Neither wget or curl were found'
@@ -191,7 +192,7 @@ function reinstall_loader {
         fi
     fi
     # Setup default files
-    if [[ ! -f "${SCRIPT_ROOT}server.properties" ]]; then
+    if [[ ! -f "${scriptRoot}server.properties" ]]; then
         echo 'Could not find server.properties, creating initial copy...'
         write_to_log 'INFO: server.properties not found... populating default'
         {
@@ -201,19 +202,19 @@ function reinstall_loader {
             echo "level-type=${settings["DEFAULT_WORLD_TYPE"]}",
             echo "snooper-enabled=false",
             echo "max-tick-time=90000",
-            echo "motd=$PACK_NAME"
-        } > "${SCRIPT_ROOT}server.properties"
+            echo "motd=$packName"
+        } > "${scriptRoot}server.properties"
     fi
-    if [[ ! -f "${SCRIPT_ROOT}eula.txt" ]]; then
+    if [[ ! -f "${scriptRoot}eula.txt" ]]; then
         echo 'Could not find eula.txt, creating initial copy...'
         write_to_log 'INFO: eula.txt not found... populating default'
-        echo "eula=false" > "${SCRIPT_ROOT}eula.txt"
+        echo "eula=false" > "${scriptRoot}eula.txt"
     fi
-    echo "Installing $LOADER_NAME now, please wait..."
-    write_to_log "INFO: Starting $LOADER_NAME install now, details below:"
-    local installerName="installer-$LOADER_NAME-$LOADER_VER.jar"
+    echo "Installing $loaderName now, please wait..."
+    write_to_log "INFO: Starting $loaderName install now, details below:"
+    local installerName="installer-$loaderName-$loaderVer.jar"
     write_to_log "--------------------------"
-    "$JAVA_PATH" -jar "$installerName" --installServer >> "${SCRIPT_ROOT}logs/serverstart.log" 2>&1
+    "$javaPath" -jar "$installerName" --installServer >> "${scriptRoot}logs/serverstart.log" 2>&1
     write_to_log "--------------------------"
     rm "$installerName"
     # Name apparently has no prefix?
@@ -227,27 +228,26 @@ function check_setup {
     local forge
     local cleanroom
     local reinstall=false
-    local jarName
     # Check a loader is installed
-    if [[ ! -f "${SCRIPT_ROOT}minecraft_server.$MC_VER.jar" ]]; then
-        echo -e "${YELLOW}Minecraft binary not found, installing $LOADER_NAME...${RESET}"
-        write_to_log "INFO: Minecraft binary not found, installing $LOADER_NAME..."
+    if [[ ! -f "${scriptRoot}minecraft_server.$mcVer.jar" ]]; then
+        echo -e "${YELLOW}Minecraft binary not found, installing $loaderName...${RESET}"
+        write_to_log "INFO: Minecraft binary not found, installing $loaderName..."
         reinstall=true
     else
-        vanilla="${SCRIPT_ROOT}minecraft_server.$MC_VER.jar"
+        vanilla="${scriptRoot}minecraft_server.$mcVer.jar"
     fi
     # Check libraries for proper loader install
-    if [[ ! -d "${SCRIPT_ROOT}libraries" ]]; then
-        echo -e "${YELLOW}Libraries folder not found, installing $LOADER_NAME...${RESET}"
-        write_to_log "INFO: Libraries folder not found, installing $LOADER_NAME..."
+    if [[ ! -d "${scriptRoot}libraries" ]]; then
+        echo -e "${YELLOW}Libraries folder not found, installing $loaderName...${RESET}"
+        write_to_log "INFO: Libraries folder not found, installing $loaderName..."
         reinstall=true
     else
-        libs="${SCRIPT_ROOT}libraries"
-        if [[ -f "${SCRIPT_ROOT}forge-$MC_VER-$LOADER_VER.jar" ]]; then
-            forge="${SCRIPT_ROOT}forge-$MC_VER-$LOADER_VER.jar"
+        libs="${scriptRoot}libraries"
+        if [[ -f "${scriptRoot}forge-$mcVer-$loaderVer.jar" ]]; then
+            forge="${scriptRoot}forge-$mcVer-$loaderVer.jar"
         fi
-        if [[ -f "${SCRIPT_ROOT}cleanroom-$LOADER_VER.jar" ]]; then
-            cleanroom="${SCRIPT_ROOT}cleanroom-$LOADER_VER.jar"
+        if [[ -f "${scriptRoot}cleanroom-$loaderVer.jar" ]]; then
+            cleanroom="${scriptRoot}cleanroom-$loaderVer.jar"
         else
             # Remove any old Cleanroom
             rm cleanroom-*.jar 2> /dev/null
@@ -255,28 +255,27 @@ function check_setup {
         # Check for existing Cleanroom
         if [[ $useCleanroom == true && (-z $cleanroom) ]]; then
             # Remove Forge if it exists as we want Cleanroom
-            rm "${SCRIPT_ROOT}forge-$MC_VER-${settings["FORGE_VER"]}.jar" 2> /dev/null
+            rm "${scriptRoot}forge-$mcVer-${settings["FORGE_VER"]}.jar" 2> /dev/null
             reinstall=true
         # Check for existing Forge
         elif [[ $useCleanroom == false && (-z $forge) ]]; then
             # Remove Cleanroom if it exists as we want Forge
-            rm "${SCRIPT_ROOT}cleanroom-${settings["CLEANROOM_VER"]}.jar" 2> /dev/null
+            rm "${scriptRoot}cleanroom-${settings["CLEANROOM_VER"]}.jar" 2> /dev/null
             reinstall=true
         fi
     fi
     # Set jarName even if jars not found
     if [[ $useCleanroom == true ]]; then
-        jarName="${SCRIPT_ROOT}cleanroom-${settings["CLEANROOM_VER"]}.jar"
+        jarName="${scriptRoot}cleanroom-${settings["CLEANROOM_VER"]}.jar"
     else
-        jarName="${SCRIPT_ROOT}forge-$MC_VER-${settings["FORGE_VER"]}.jar"
+        jarName="${scriptRoot}forge-$mcVer-${settings["FORGE_VER"]}.jar"
     fi
     if [[ $reinstall == true ]]; then
         reinstall_loader "$vanilla" "$libs" "$forge" "$cleanroom" "$1"
         echo "---------------------------------------------------"
-        echo "$PACK_NAME Server Files are now ready!"
+        echo "$packName Server Files are now ready!"
         echo "---------------------------------------------------"
     fi
-    JAR_NAME=$jarName
 }
 
 function check_eula {
@@ -304,8 +303,8 @@ function prompt_restart {
 }
 
 declare -i stopCounter=0
-declare -i days=
-declare -i secs=
+declare -i days
+declare -i secs
 restartEntire=false
 printf -v dateTime '%(%Y-%m-%d %H:%M:%S)T' -1 
 printf -v rawTime '%(%s)T' -1
@@ -317,12 +316,12 @@ while true; do
     write_to_log $'--------------------------\n'
     
     # Read settings.cfg
-    if [[ ! -f "${SCRIPT_ROOT}settings.cfg" ]]; then
-        cat "${SCRIPT_ROOT}settings.cfg"
+    if [[ ! -f "${scriptRoot}settings.cfg" ]]; then
+        cat "${scriptRoot}settings.cfg"
         exit_error
     fi
     write_to_log $'DEBUG: settings.cfg Found. Logging full contents below:\n--------------------------'
-    cat "${SCRIPT_ROOT}settings.cfg" >> "${SCRIPT_ROOT}logs/serverstart.log"
+    cat "${scriptRoot}settings.cfg" >> "${scriptRoot}logs/serverstart.log"
     write_to_log '--------------------------'
     #Read the config file line by line
     while IFS=$'\n\r' read -r line || [[ -n "$line" ]]; do
@@ -331,15 +330,13 @@ while true; do
             key="${line%%=*}"
             value="${line#*=}"
             # Trim leading/trailing whitespace
-            shopt -s extglob
             value=${value%%*([[:blank:]])}
             value=${value##*([[:blank:]])}
-            shopt -u extglob
             settings["$key"]="$value"
         fi
-    done < "${SCRIPT_ROOT}settings.cfg"
+    done < "${scriptRoot}settings.cfg"
     # Read MODPACK_NAME option
-    PACK_NAME="${settings["MODPACK_NAME"]}"
+    packName="${settings["MODPACK_NAME"]}"
     # Read USE_CLEANROOM option
     case "${settings["USE_CLEANROOM"]}" in
         true) useCleanroom=${settings["USE_CLEANROOM"]} ;;
@@ -350,31 +347,31 @@ while true; do
         ;;
     esac
     if [[ $useCleanroom == true ]]; then
-        LOADER_NAME="Cleanroom"
-        LOADER_VER=${settings["CLEANROOM_VER"]}
+        loaderName="Cleanroom"
+        loaderVer=${settings["CLEANROOM_VER"]}
     else
-        LOADER_NAME="Forge"
-        LOADER_VER=${settings["FORGE_VER"]}
+        loaderName="Forge"
+        loaderVer=${settings["FORGE_VER"]}
     fi
     # Verify MC_VER option
     if [[ ! (${settings["MC_VER"]} =~ [0-9\.]*) ]]; then
         echo -e "${RED}MC_VER is invalid: MC_VER=${settings["MC_VER"]}${RESET}"
         exit_error
     else
-        MC_VER=${settings["MC_VER"]}
+        mcVer=${settings["MC_VER"]}
     fi
     # Read IGNORE_OFFLINE option
     case "${settings["IGNORE_OFFLINE"]}" in
-        true) OFFLINE=${settings["IGNORE_OFFLINE"]} ;;
-        false) OFFLINE=${settings["IGNORE_OFFLINE"]} ;;
+        true) offline=${settings["IGNORE_OFFLINE"]} ;;
+        false) offline=${settings["IGNORE_OFFLINE"]} ;;
         *)
             echo -e "${RED}IGNORE_OFFLINE must be 'true' or 'false': IGNORE_OFFLINE=${settings["IGNORE_OFFLINE"]}${RESET}"
             exit_error
         ;;
     esac
     echo
-    echo -e "*** Loading $PACK_NAME Server ***"
-    echo -e "Running $LOADER_NAME $LOADER_VER for Minecraft $MC_VER"
+    echo -e "*** Loading $packName Server ***"
+    echo -e "Running $loaderName $loaderVer for Minecraft $mcVer"
     echo
     
     echo ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
@@ -397,21 +394,30 @@ while true; do
     fi
     # Read JAVA_PATH
     if [[ -n ${settings["JAVA_PATH"]} && ${settings["JAVA_PATH"]} != "DISABLE" ]]; then
-        JAVA_PATH=${settings["JAVA_PATH"]}
+        javaPath=${settings["JAVA_PATH"]}
         # Strip quotes just in case
-        JAVA_PATH=${JAVA_PATH%\"}
-        JAVA_PATH=${JAVA_PATH#\"}
+        javaPath=${JAVA_PATH%\"}
+        javaPath=${JAVA_PATH#\"}
     else
-        JAVA_PATH=java
+        javaPath=java
     fi
     # Read and set java args
-    JAVA_ARGS="-Xmx${settings["MAX_RAM"]} -Xms${settings["MAX_RAM"]} ${settings["JAVA_ARGS"]}"
+    read -r -a args <<< "${settings["JAVA_ARGS"]}"
+    javaArgs=("-Xmx${settings["MAX_RAM"]}" "-Xms${settings["MAX_RAM"]}")
+    for arg in "${args[@]}"; do
+        javaArgs+=("$arg")
+    done
+    # Read and set game args
+    read -r -a args <<< "${settings["GAME_ARGS"]}"
+    for arg in "${args[@]}"; do
+        gameArgs+=("$arg")
+    done
     # Read CRASH_TIMER option
-    CRASH_TIMER=${settings["CRASH_TIMER"]}
+    crashTimer=${settings["CRASH_TIMER"]}
     # ### Various checks ###
     check_java
     online=false
-    if [[ $OFFLINE == true ]]; then
+    if [[ $offline == true ]]; then
         echo -e "${YELLOW}Skipping internet connectivity check...${RESET}"
         write_to_log 'WARN: Skipping internet connectivity check...'
     else
@@ -430,16 +436,15 @@ while true; do
         shift
     done
     ### Start ###
-    echo -e "${YELLOW}Starting $PACK_NAME Server...${RESET}"
+    echo -e "${YELLOW}Starting $packName Server...${RESET}"
     write_to_log 'INFO: Starting Server...'
-    echo "Attempting to execute [ $JAVA_PATH $JAVA_ARGS -jar $JAR_NAME ${settings["GAME_ARGS"]} ]"
+    echo "Attempting to execute [ $javaPath ${javaArgs[*]} -jar $jarName ${gameArgs[*]} ]"
     echo
-    write_to_log "DEBUG: Attempting to execute [ $JAVA_PATH $JAVA_ARGS -jar $JAR_NAME ${settings["GAME_ARGS"]} ]"
-    # shellcheck disable=SC2086
-    "$JAVA_PATH" $JAVA_ARGS -jar "$JAR_NAME" ${settings["GAME_ARGS"]}
+    write_to_log "DEBUG: Attempting to execute [ $javaPath ${javaArgs[*]} -jar $jarName ${gameArgs[*]} ]"
+    "$javaPath" "${javaArgs[@]}" -jar "$jarName" "${gameArgs[@]}"
     # Check if we should restart the run
     echo
-    echo -e "${YELLOW}$PACK_NAME Server was stopped (possibly crashed)...${RESET}"
+    echo -e "${YELLOW}$packName Server was stopped (possibly crashed)...${RESET}"
     # check_eula
     printf -v dateTimeNow '%(%Y-%m-%d %H:%M:%S)T' -1 
     printf -v rawTimeNow '%(%s)T' -1
@@ -448,9 +453,9 @@ while true; do
     stopCounter+=1
     echo "Server started at $dateTime has stopped at $dateTimeNow."
     write_to_log "ERROR: Server started at $dateTime has stopped at $dateTimeNow."
-    echo "Server has $stopCounter consecutive stops, each within $CRASH_TIMER seconds of each other..."
+    echo "Server has $stopCounter consecutive stops, each within $crashTimer seconds of each other..."
     echo
-    write_to_log "DEBUG: Server has $stopCounter consecutive stops, each within $CRASH_TIMER seconds of each other..."
+    write_to_log "DEBUG: Server has $stopCounter consecutive stops, each within $crashTimer seconds of each other..."
     # Reset if it's been a day
     if [[ $days -gt 0 ]]; then
         echo 'More than one day since last crash/restart... resetting counter/timer'
@@ -459,11 +464,11 @@ while true; do
         rawTime=$rawTimeNow
         stopCounter=0
     # Reset if crash timer from config was exceeded
-    elif [[ $secs -gt $CRASH_TIMER ]]; then
+    elif [[ $secs -gt $crashTimer ]]; then
         echo "Last crash/startup was $secs+ seconds ago"
         write_to_log "INFO: Last crash/startup was $secs+ seconds ago"
-        echo "More than $CRASH_TIMER seconds since last crash/restart... resetting counter/timer"
-        write_to_log "INFO: More than $CRASH_TIMER seconds since last crash/restart... resetting counter/timer"
+        echo "More than $crashTimer seconds since last crash/restart... resetting counter/timer"
+        write_to_log "INFO: More than $crashTimer seconds since last crash/restart... resetting counter/timer"
         dateTime=$dateTimeNow
         rawTime=$rawTimeNow
         stopCounter=0
@@ -477,7 +482,7 @@ while true; do
         echo -e "${RED}===================================================${RESET}"
         echo
         write_to_log 'ERROR: Server has stopped/crashed too many times!'
-        echo "$stopCounter Crashes have been counted each within $CRASH_TIMER seconds."
+        echo "$stopCounter Crashes have been counted each within $crashTimer seconds."
         exit_error
     # Under threshold of crashes, go ahead and try restart
     else

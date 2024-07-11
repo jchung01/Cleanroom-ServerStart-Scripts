@@ -207,7 +207,7 @@ function ReinstallLoader {
     & $JAVA_PATH -jar $installerName --installServer 2>&1 | Out-File -FilePath $PSScriptRoot/"logs/serverstart.log" -Append
     WriteToLog "--------------------------"
     Remove-Item $installerName
-    Remove-Item "$($installerName).log"
+    Remove-Item "installer.log"
 }
 
 function CheckSetup {

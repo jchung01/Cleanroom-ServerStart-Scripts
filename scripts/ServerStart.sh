@@ -308,7 +308,7 @@ declare -i secs
 restartEntire=false
 printf -v dateTime '%(%Y-%m-%d %H:%M:%S)T' -1 
 printf -v rawTime '%(%s)T' -1
-if [[ ! (${BASH_VERSINFO[0]} -ge 4 && ${BASH_VERSINFO[1]} -ge 2) ]]; then
+if [[ ${BASH_VERSINFO[0]} -lt 4 || (${BASH_VERSINFO[0]} -eq 4 && ${BASH_VERSINFO[1]} -lt 2) ]]; then
     echo 'Bash 4.2 or greater is required for this script. Please update to 4.2 or greater.'
     exit_error
 fi

@@ -82,7 +82,7 @@ function CheckJava {
     $errored = $false
     & $JAVA_PATH -version
     WriteToLog "DEBUG: JAVA version output: $(& $JAVA_PATH -version 2>&1)"
-    if ($useCleanroom -and ($version.Major -ne 22)) {
+    if ($useCleanroom -and ($version.Major -ge 21)) {
         Write-Host "ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg." -ForegroundColor red
         Write-Host "Using Cleanroom, which requires Java 22, but found $($version).`nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg." -ForegroundColor red
         $errored = $true
@@ -91,6 +91,9 @@ function CheckJava {
         Write-Host "ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg." -ForegroundColor red
         Write-Host "Using Forge, which requires Java 8, but found $($version).`nIf you want to use Forge with your current Java, set 'USE_CLEANROOM = false' in settings.cfg." -ForegroundColor red
         $errored = $true
+    }
+    if ($errored) {
+        ExitError
     }
 
     $bitness = & $JAVA_PATH -XshowSettings:properties -version 2>&1 | Select-String -Pattern sun.arch.data.model | ConvertFrom-StringData
@@ -101,9 +104,6 @@ function CheckJava {
         else {
             WriteToLog "INFO: Found 32-bit Java $($version)"
             Write-Host "ERROR: 32-bit java version found. Please install 64-bit java." -ForegroundColor red
-            $errored = $true
-        }
-        if ($errored) {
             ExitError
         }
     }

@@ -80,31 +80,33 @@ function write_to_log {
 
 function check_java {
     echo -e "${YELLOW}Checking java installation...${RESET}"
+    local fullVersion
     local version
-    version=$("$javaPath" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+    fullVersion=$("$javaPath" -version 2>&1 | awk -F '"' '/version/ {print $2}')
+    version=$(echo "$fullVersion" | awk -F '.' '{print $1$2}')
     local errored=false
     "$javaPath" -version
     write_to_log "DEBUG: JAVA version output: $("$javaPath" -version 2>&1)"
-    if [[ $useCleanroom == true && ! ($version =~ ^"22".*) ]]; then
+    if [[ $useCleanroom == true && ! ($version -ge 210) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"
-        echo -e "${RED}Using Cleanroom, which requires Java 22, but found $version.\nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg.${RESET}"
+        echo -e "${RED}Using Cleanroom, which requires Java 22, but found $fullVersion.\nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg.${RESET}"
         errored=true
-    elif [[ $useCleanroom == false && ! ($version =~ ^"1.8".*) ]]; then
+    elif [[ $useCleanroom == false && ! ($version -eq 18) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"
-        echo -e "${RED}Using Forge, which requires Java 8, but found $version.\nIf you want to use Forge with your current Java, set 'USE_CLEANROOM = false' in settings.cfg.${RESET}"
+        echo -e "${RED}Using Forge, which requires Java 8, but found $fullVersion.\nIf you want to use Forge with your current Java, set 'USE_CLEANROOM = false' in settings.cfg.${RESET}"
         errored=true
+    fi
+    if [[ $errored == true ]]; then
+        exit_error
     fi
 
     local bitness
     bitness=$("$javaPath" -XshowSettings:properties -version 2>&1 | grep "sun.arch.data.model" | awk -F '=' '{printf $2+0}')
     if [[ $bitness -eq 64 ]]; then
-        write_to_log "INFO: Found 64-bit Java $version"
+        write_to_log "INFO: Found 64-bit Java $fullVersion"
     else
-        write_to_log "INFO: Found 32-bit Java $version"
+        write_to_log "INFO: Found 32-bit Java $fullVersion"
         echo -e "${RED}ERROR: 32-bit java version found. Please install 64-bit java.${RESET}"
-        errored=true
-    fi
-    if [[ $errored == true ]]; then
         exit_error
     fi
 }

@@ -5,16 +5,17 @@ These scripts will run a Forge or Cleanroom server, automatically installing the
 
 Originally created for use in the [MeatballCraft](https://www.curseforge.com/minecraft/modpacks/meatballcraft) modpack, but is free for anyone to use, modify or distribute under the MIT license. Borrowed code from AllTheMods falls under [their custom license](./LICENSE_AllTheMods.md).
 
-Make sure you're using 64-bit Java and the right version for the right modloader! Java 8 for Forge, Java 21/22 for Cleanroom.
+Make sure you're using 64-bit Java and the right version for the right modloader! Java 8 for Forge, Java 21+ for Cleanroom.
 
 ## How to Use
 Copy-paste/drop the contents of `/scripts` into your main server folder.
 
 **Do not modify ServerStart.bat or ServerStart.sh!** (unless you know what you are doing)  
 All settings are modified in `settings.cfg` instead.  
-**If you would like to use Cleanroom Loader, set `USE_CLEANROOM` to `true`.** You may need to specify the `JAVA_PATH` setting as well to point to your Java 22 installation.
+**If you would like to use Cleanroom Loader, set `USE_CLEANROOM` to `true`.** You may need to specify the `JAVA_PATH` setting as well to point to your Java 21+ installation.
 
-As always, make sure you have the latest/matching Fugue and Scalar versions when using Cleanroom! Also, you may need to disable/remove MixinBooter and ConfigAnytime as Cleanroom already bundles these mods and you will get a duplicate mod error.
+As always, make sure you have the latest/matching Fugue and Scalar versions when using Cleanroom!  
+Also, **if using Cleanroom 0.2.2-alpha or below**, you may need to disable/remove MixinBooter and ConfigAnytime as Cleanroom already bundles these mods and you will get a duplicate mod error.  
 
 ### Arguments
 | Setting   | Description                |
@@ -48,7 +49,7 @@ Formatting is very important for it to load correctly:
 | ----------|----------------------------| :------------:|
 | **MAX_RAM**     | How much max RAM to allow the JVM to allocate to the server  | `4G` |
 | **GAME_ARGS**   | Any other args to be passed to the game, not java args. Probably shouldn't add anything here, but can remove `nogui` if you really want the vanilla server panel. | `nogui` |
-| **JAVA_ARGS**   | The defaults provided are meant to be as general as possible so they can work on both Java 8 and Java 22, but can be edited if desired | *See Below* |
+| **JAVA_ARGS**   | The defaults provided are meant to be as general as possible so they can work on both Java 8 and Java 21+, but can be edited if desired | *See Below* |
 | **USE_CLEANROOM** | Set to `true` if you want to use Cleanroom Loader. `false` is to use Forge, as usual. | `false` |
 | **CRASH_COUNT** | The max number of consecutive crashes that each occur within so many seconds of each other. If max is reaches, the script will exit. This is to stop spamming restarts of a server with a critical issue. | `5` |
 | **CRASH_TIMER** | The number of seconds to consider a crash within to be "consecutive" | `600` |
@@ -61,7 +62,7 @@ Formatting is very important for it to load correctly:
 | **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is for the targeted Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.2.2-alpha` |
 
 ## Optional Java Arguments
-The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 22. Most arguments provided are to set Java 8 defaults closer to Java 22 defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_PATH` with the below ones if you want to use them.
+The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 21+. Most arguments provided are to set Java 8 defaults closer to Java 21+ defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_PATH` with the below ones if you want to use them.
 
 **Please keep in mind** that java arguments are **not** what mainly determines your performance (especially for Java 8); optimization mods are! Check out the [Opticraft page](https://red-studio-ragnarok.github.io/Opticraft/) for generally good optimization mods for 1.12.2. Arguments are hard to test correctly, so don't expect much, if any, performance improvements from changing them!
 
@@ -83,7 +84,7 @@ Option 2:
 ```
 This is a list made from this [repo](https://github.com/Mukul1127/Minecraft-Performance-Flags-Benchmarks/tree/main). It uses G1GC, like the default set of args, with [Aikar's well-known server arguments](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/) but it has more fine-tuning args that **are untested**, so take these with a grain of salt.
 
-### Java 22
+### Java 21 or higher
 Option 1:
 ```
 -XX:+UnlockExperimentalVMOptions -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+UseZGC -XX:+ZGenerational -Dfml.readTimeout=90 -Dfml.queryResult=confirm

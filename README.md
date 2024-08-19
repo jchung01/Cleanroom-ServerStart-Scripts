@@ -10,7 +10,7 @@ Make sure you're using 64-bit Java and the right version for the right modloader
 ## How to Use
 Copy-paste/drop the contents of `/scripts` into your main server folder.
 
-**Do not modify ServerStart.bat or ServerStart.sh!** (unless you know what you are doing)  
+**Do not modify starter.bat, ServerStart.ps1, or ServerStart.sh!** (unless you know what you are doing)  
 All settings are modified in `settings.cfg` instead.  
 **If you would like to use Cleanroom Loader, set `USE_CLEANROOM` to `true`.** You may need to specify the `JAVA_PATH` setting as well to point to your Java 21+ installation.
 
@@ -62,7 +62,7 @@ Formatting is very important for it to load correctly:
 | **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is for the targeted Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.2.3-alpha` |
 
 ## Optional Java Arguments
-The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 21+. Most arguments provided are to set Java 8 defaults closer to Java 21+ defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_PATH` with the below ones if you want to use them.
+The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 21+. Most arguments provided are to set Java 8 defaults closer to Java 21+ defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_ARGS` with the below ones if you want to use them.
 
 **Please keep in mind** that java arguments are **not** what mainly determines your performance (especially for Java 8); optimization mods are! Check out the [Opticraft page](https://red-studio-ragnarok.github.io/Opticraft/) for generally good optimization mods for 1.12.2. Arguments are hard to test correctly, so don't expect much, if any, performance improvements from changing them!
 

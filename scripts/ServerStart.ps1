@@ -82,9 +82,9 @@ function CheckJava {
     $errored = $false
     & $JAVA_PATH -version
     WriteToLog "DEBUG: JAVA version output: $(& $JAVA_PATH -version 2>&1)"
-    if ($useCleanroom -and ($version.Major -ge 21)) {
+    if ($useCleanroom -and ($version.Major -lt 21)) {
         Write-Host "ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg." -ForegroundColor red
-        Write-Host "Using Cleanroom, which requires Java 22, but found $($version).`nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg." -ForegroundColor red
+        Write-Host "Using Cleanroom, which requires Java 21 or higher, but found $($version).`nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg." -ForegroundColor red
         $errored = $true
     }
     elseif (-not ($useCleanroom) -and ($version.Major -ne 8)) {

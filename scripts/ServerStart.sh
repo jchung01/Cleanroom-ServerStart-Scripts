@@ -89,7 +89,7 @@ function check_java {
     write_to_log "DEBUG: JAVA version output: $("$javaPath" -version 2>&1)"
     if [[ $useCleanroom == true && ! ($version -ge 210) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"
-        echo -e "${RED}Using Cleanroom, which requires Java 22, but found $fullVersion.\nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg.${RESET}"
+        echo -e "${RED}Using Cleanroom, which requires Java 21 or higher, but found $fullVersion.\nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg.${RESET}"
         errored=true
     elif [[ $useCleanroom == false && ! ($version -eq 18) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"

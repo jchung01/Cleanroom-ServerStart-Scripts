@@ -104,10 +104,14 @@ function check_java {
     bitness=$("$javaPath" -XshowSettings:properties -version 2>&1 | grep "sun.arch.data.model" | awk -F '=' '{printf $2+0}')
     if [[ $bitness -eq 64 ]]; then
         write_to_log "INFO: Found 64-bit Java $fullVersion"
-    else
+    elif [[ $bitness -eq 32 ]]; then
         write_to_log "INFO: Found 32-bit Java $fullVersion"
         echo -e "${RED}ERROR: 32-bit java version found. Please install 64-bit java.${RESET}"
         exit_error
+    # Looks like some JVMs don't report `sun.arch.data.model`
+    else
+        write_to_log "WARN: Couldn't determine if Java $fullVersion is 32 or 64-bit"
+        echo -e "${YELLOW}WARN: Couldn't determine if Java $fullVersion is 64-bit, proceeding anyway!${RESET}"
     fi
 }
 

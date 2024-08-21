@@ -101,10 +101,15 @@ function CheckJava {
         if ($_.Value -eq 64) {
             WriteToLog "INFO: Found 64-bit Java $($version)"
         }
-        else {
+        elseif ($_.Value -eq 32) {
             WriteToLog "INFO: Found 32-bit Java $($version)"
             Write-Host "ERROR: 32-bit java version found. Please install 64-bit java." -ForegroundColor red
             ExitError
+        }
+        # Looks like some JVMs don't report `sun.arch.data.model`
+        else {
+            WriteToLog "WARN: Couldn't determine if Java $($version) is 32 or 64-bit"
+            Write-Host "WARN: Couldn't determine if Java $($version) is 64-bit, proceeding anyway!" -ForegroundColor yellow
         }
     }
 }

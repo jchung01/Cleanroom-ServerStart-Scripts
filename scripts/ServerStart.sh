@@ -399,15 +399,15 @@ while true; do
     echo
     # Verify MAX_RAM option
     if [[ ! (${settings["MAX_RAM"]} =~ [0-9]*[mMgG])]]; then
-        echo -e "{$RED}MAX_RAM must follow end in M or G: MAX_RAM=${settings["MAX_RAM"]}${RESET}"
+        echo -e "${RED}MAX_RAM must follow end in M or G: MAX_RAM=${settings["MAX_RAM"]}${RESET}"
         exit_error
     fi
     # Read JAVA_PATH
     if [[ -n ${settings["JAVA_PATH"]} && ${settings["JAVA_PATH"]} != "DISABLE" ]]; then
         javaPath=${settings["JAVA_PATH"]}
         # Strip quotes just in case
-        javaPath=${JAVA_PATH%\"}
-        javaPath=${JAVA_PATH#\"}
+        javaPath=${javaPath%\"}
+        javaPath=${javaPath#\"}
     else
         javaPath=java
     fi

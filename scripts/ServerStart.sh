@@ -228,7 +228,7 @@ function reinstall_loader {
     write_to_log "INFO: Starting $loaderName install now, details below:"
     local installerName="installer-$loaderName-$loaderVer.jar"
     write_to_log "--------------------------"
-    "$javaPath" -jar "$installerName" --installServer 2>&1 | tee -a "${scriptRoot}logs/serverstart.log" | install_progress
+    "$javaPath" -jar "${scriptRoot}$installerName" --installServer "${scriptRoot}" 2>&1 | tee -a "${scriptRoot}logs/serverstart.log" | install_progress
     write_to_log "--------------------------"
     rm "${scriptRoot}$installerName"
     rm -- "${scriptRoot}"*installer*.log

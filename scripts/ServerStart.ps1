@@ -209,7 +209,7 @@ function ReinstallLoader {
     WriteToLog "INFO: Starting $($LOADER_NAME) install now, details below:"
     $installerName = "installer-$($LOADER_NAME)-$($LOADER_VER).jar"
     WriteToLog "--------------------------"
-    & $JAVA_PATH -jar $installerName --installServer 2>&1 | 
+    & $JAVA_PATH -jar $PSScriptRoot/$installerName --installServer $PSScriptRoot 2>&1 | 
         Tee-Object -FilePath $PSScriptRoot/"logs/serverstart.log" -Append | 
         ForEach-Object -Process { Write-Progress -Activity "Installing" -Status "$_" } -End {
             Write-Progress -Completed -Activity "Installation complete!"

@@ -45,6 +45,7 @@ scriptRoot="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 RED="$(tput setaf 1)"
 YELLOW="$(tput setaf 3)"
 RESET="$(tput sgr0)"
+CLEAR_LINE="$(tput el)"
 
 declare -A settings
 declare -a javaArgs
@@ -146,6 +147,13 @@ function check_internet {
     fi
 }
 
+function install_progress {
+    local input
+    while read -r input; do
+        echo -ne "\r${CLEAR_LINE}${input}"
+    done
+}
+
 function reinstall_loader {
     # $1 = Vanilla
     # $2 = Libs
@@ -220,11 +228,10 @@ function reinstall_loader {
     write_to_log "INFO: Starting $loaderName install now, details below:"
     local installerName="installer-$loaderName-$loaderVer.jar"
     write_to_log "--------------------------"
-    "$javaPath" -jar "$installerName" --installServer >> "${scriptRoot}logs/serverstart.log" 2>&1
+    "$javaPath" -jar "$installerName" --installServer 2>&1 | tee -a "${scriptRoot}logs/serverstart.log" | install_progress
     write_to_log "--------------------------"
-    rm "$installerName"
-    # Name apparently has no prefix?
-    rm "installer.log"
+    rm "${scriptRoot}$installerName"
+    rm -- "${scriptRoot}"*installer*.log
 }
 
 function check_setup {

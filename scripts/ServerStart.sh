@@ -82,17 +82,17 @@ function write_to_log {
 function check_java {
     echo -e "${YELLOW}Checking java installation...${RESET}"
     local fullVersion
-    local version
+    local majorVersion
     fullVersion=$("$javaPath" -version 2>&1 | awk -F '"' '/version/ {print $2}')
-    version=$(echo "$fullVersion" | awk -F '.' '{print $1$2}')
+    majorVersion=$(echo "$fullVersion" | sed 's/^1\.//' | awk -F '[.\\-_]' '{print $1}')
     local errored=false
     "$javaPath" -version
     write_to_log "DEBUG: JAVA version output: $("$javaPath" -version 2>&1)"
-    if [[ $useCleanroom == true && ! ($version -ge 210) ]]; then
+    if [[ $useCleanroom == true && ! ($majorVersion -ge 21) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"
         echo -e "${RED}Using Cleanroom, which requires Java 21 or higher, but found $fullVersion.\nIf you want to use Cleanroom with your current Java, set 'USE_CLEANROOM = true' in settings.cfg.${RESET}"
         errored=true
-    elif [[ $useCleanroom == false && ! ($version -eq 18) ]]; then
+    elif [[ $useCleanroom == false && ! ($majorVersion -eq 8) ]]; then
         echo -e "${RED}ERROR: Invalid java version found. Check your environment variables or set JAVA_PATH in settings.cfg.${RESET}"
         echo -e "${RED}Using Forge, which requires Java 8, but found $fullVersion.\nIf you want to use Forge with your current Java, set 'USE_CLEANROOM = false' in settings.cfg.${RESET}"
         errored=true

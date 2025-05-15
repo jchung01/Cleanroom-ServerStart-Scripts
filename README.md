@@ -59,7 +59,7 @@ Formatting is very important for it to load correctly:
 | **DEFAULT_WORLD_TYPE** | Allows for changing the type of world used.  | `BIOMESOP` |
 | **MCVER** | Target Minecraft version. Usually set by pack dev before distributing and not intended to be changed by end-users. Must be complete/exact and matching the version on Forge's website (i.e. `1.12` is not the same as `1.12.2`) | `1.12.2` |
 | **FORGEVER** | Target Forge version. Provided here for legacy purposes and **will not do anything**, as version 2860 will always be downloaded | `14.23.5.2860` | 
-| **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is for the targeted Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.2.3-alpha` |
+| **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is for the targeted Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.3.0-alpha` |
 
 ## Optional Java Arguments
 The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 21+. Most arguments provided are to set Java 8 defaults closer to Java 21+ defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_ARGS` with the below ones if you want to use them.
@@ -96,3 +96,18 @@ Option 2:
 -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=400M -XX:NonNMethodCodeHeapSize=12M -XX:ProfiledCodeHeapSize=194M -XX:NonProfiledCodeHeapSize=194M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseVectorCmov -XX:+PerfDisableSharedMem -XX:+UseFastUnorderedTimeStamps -XX:+UseCriticalJavaThreadPriority -XX:ThreadPriorityPolicy=1 -XX:AllocatePrefetchStyle=3 -XX:+UseG1GC -XX:MaxGCPauseMillis=130 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=28 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=3 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcMarkStepDurationMillis=5 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
 Same as Java 8's option 2 besides a few unsupported flags, so same warnings apply.
+
+### Java 24 or higher
+This section has arguments similar to Java 21, but enables a new feature introduced in Java 24, [Compact Object Headers](https://openjdk.org/jeps/450), which should noticeably reduce memory usage.
+
+Option 1:
+```
+-XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:+UseZGC -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+```
+Uses ZGC garbage collector. Same as Java 21 option 1, so the same note about possibly needing to allocate more RAM applies.
+
+Option 2:
+```
+-XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+UseStringDeduplication -XX:MaxGCPauseMillis=130 -XX:G1HeapRegionSize=8M -XX:G1NewSizePercent=28 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+```
+Uses the default G1GC garbage collector.

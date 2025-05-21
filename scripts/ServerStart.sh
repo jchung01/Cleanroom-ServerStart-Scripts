@@ -295,7 +295,7 @@ function check_eula {
     # Check for EULA agreement
     if ! grep -q "eula=true" eula.txt 2> /dev/null; then
         echo
-        echo -e "${RED}Could not find 'eula=true' in eula.txt file${RESET}"
+        echo -e "${RED}Could not find 'eula=true' in eula.txt file, located at ${PWD}/eula.txt${RESET}"
         echo 'Please edit and save the EULA file before continuing.'
         exit_error
     fi
@@ -329,7 +329,7 @@ while true; do
     clear
     ### Initial setup ###
     write_to_log '--------------------------' true
-    write_to_log 'Starting ServerStart.ps1'
+    write_to_log 'Starting ServerStart.sh'
     write_to_log $'--------------------------\n'
     
     # Read settings.cfg
@@ -426,6 +426,7 @@ while true; do
     done
     # Read and set game args
     read -r -a args <<< "${settings["GAME_ARGS"]}"
+    gameArgs=()
     for arg in "${args[@]}"; do
         gameArgs+=("$arg")
     done

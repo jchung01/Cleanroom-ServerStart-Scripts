@@ -465,7 +465,7 @@ do {
         $dateTime = $dateTimeNow
         $stopCounter = 0
     }
-    # Reset if reached max failures
+    # Exit if reached max failures
     elseif ($stopCounter -ge $settings["CRASH_COUNT"]) {
         WriteToLog "INFO: Last crash/startup was $(-$secs)+ seconds ago"
         Write-Host "`n`n===================================================" -ForegroundColor red
@@ -480,8 +480,8 @@ do {
         WriteToLog "INFO: Last crash/startup was $(-$secs)+ seconds ago"
         $dateTime = $dateTimeNow
         WriteToLog "Total consecutive crash/stops within time threshold: $($stopCounter)"
-        Write-Host "`n`n`nServer will re-start *automatically* in less than 30 seconds..."
-        $restartEntire = PromptRestart
     }
+    Write-Host "`n`n`nServer will re-start *automatically* in less than 30 seconds..."
+    $restartEntire = PromptRestart
 }
 while ($restartEntire)

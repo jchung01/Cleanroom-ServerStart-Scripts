@@ -490,7 +490,7 @@ while true; do
         dateTime=$dateTimeNow
         rawTime=$rawTimeNow
         stopCounter=0
-    # Reset if reached max failures
+    # Exit if reached max failures
     elif [[ $stopCounter -ge ${settings["CRASH_COUNT"]} ]]; then
         write_to_log "INFO: Last crash/startup was $secs+ seconds ago"
         echo
@@ -508,15 +508,15 @@ while true; do
         dateTime=$dateTimeNow
         rawTime=$rawTimeNow
         write_to_log "Total consecutive crash/stops within time threshold: $stopCounter"
-        echo
-        echo
-        echo
-        echo 'Server will re-start *automatically* in less than 30 seconds...'
-        if prompt_restart; then
-            restartEntire=true
-        else
-            restartEntire=false
-        fi
+    fi
+    echo
+    echo
+    echo
+    echo 'Server will re-start *automatically* in less than 30 seconds...'
+    if prompt_restart; then
+        restartEntire=true
+    else
+        restartEntire=false
     fi
     [[ $restartEntire == true ]] || break 
 done

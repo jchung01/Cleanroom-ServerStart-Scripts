@@ -195,10 +195,10 @@ function reinstall_loader {
         # Check for commands, then do the download
         if (command -v curl >> /dev/null 2>&1); then
             write_to_log "DEBUG: (curl) Downloading $source"
-            curl -JL "$source" -o "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
+            curl -L "$source" -o "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
         elif (command -v wget >> /dev/null 2>&1); then
             write_to_log "DEBUG: (wget) Downloading ${source}"
-            wget "$source" -o "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
+            wget "$source" -O "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
         else
             echo -e "${RED}Neither wget or curl were found on your system. Please install one and try again${RESET}"
             write_to_log 'ERROR: Neither wget or curl were found'

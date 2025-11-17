@@ -113,4 +113,5 @@ Option 2:
 Uses the default G1GC garbage collector.
 
 ### More resources:
-Java 25 Arguments: https://cleanroommc.com/wiki/end-user-guide/args
+Java 25 Arguments: https://cleanroommc.com/wiki/end-user-guide/args  
+Article on JVM Arguments: https://exa.y2k.diy/garden/jvm-args/

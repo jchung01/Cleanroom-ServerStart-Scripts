@@ -60,8 +60,8 @@ Formatting is very important for it to load correctly:
 | **IGNORE_OFFLINE** | The scripts may not run if a connection to the internet can not be found. If you want to force allow (i.e. to run a server for local/LAN only) then set to `true`. Note, however that it will need internet connection to at least perform initial download/install of the Forge binaries | `false` |
 | **MODPACK_NAME** | Pack name to add flavor/description to script as it's running. Quotes are not needed. Can contain spaces. Technically can be very long, but will work better if short/concise (i.e. "Illumination" would be *much* better to use than "All The Mods Presents: Illumination") | `MeatballCraft, Dimensional Ascension` |
 | **DEFAULT_WORLD_TYPE** | Allows for changing the type of world used.  | `BIOMESOP` |
-| **MCVER** | Target Minecraft version. Usually set by pack dev before distributing and not intended to be changed by end-users. Must be complete/exact and matching the version on Forge's website (i.e. `1.12` is not the same as `1.12.2`) | `1.12.2` |
-| **FORGEVER** | Target Forge version. | `14.23.5.2860` | 
+| **MC_VER** | Target Minecraft version. Usually set by pack dev before distributing and not intended to be changed by end-users. Must be complete/exact and matching the version on Forge's website (i.e. `1.12` is not the same as `1.12.2`) | `1.12.2` |
+| **FORGE_VER** | Target Forge version. | `14.23.5.2860` | 
 | **CLEANROOM_VER** | Target Cleanroom version. This should be a version specified from [Cleanroom's Maven](https://repo.cleanroommc.com/#/releases/com/cleanroommc/cleanroom). | `0.5.9-alpha` |
 
 ## Optional Java Arguments

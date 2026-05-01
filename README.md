@@ -61,8 +61,8 @@ Formatting is very important for it to load correctly:
 | **MODPACK_NAME** | Pack name to add flavor/description to script as it's running. Quotes are not needed. Can contain spaces. Technically can be very long, but will work better if short/concise (i.e. "Illumination" would be *much* better to use than "All The Mods Presents: Illumination") | `MeatballCraft, Dimensional Ascension` |
 | **DEFAULT_WORLD_TYPE** | Allows for changing the type of world used.  | `BIOMESOP` |
 | **MCVER** | Target Minecraft version. Usually set by pack dev before distributing and not intended to be changed by end-users. Must be complete/exact and matching the version on Forge's website (i.e. `1.12` is not the same as `1.12.2`) | `1.12.2` |
-| **FORGEVER** | Target Forge version. Provided here for legacy purposes and **will not do anything**, as version 2860 will always be downloaded | `14.23.5.2860` | 
-| **CLEANROOM_VER** | Target Cleanroom version. This should be set to whatever the shared prefix is for the targeted Cleanroom release on their [Github](https://github.com/CleanroomMC/Cleanroom/releases/). | `0.5.9-alpha` |
+| **FORGEVER** | Target Forge version. | `14.23.5.2860` | 
+| **CLEANROOM_VER** | Target Cleanroom version. This should be a version specified from [Cleanroom's Maven](https://repo.cleanroommc.com/#/releases/com/cleanroommc/cleanroom). | `0.5.9-alpha` |
 
 ## Optional Java Arguments
 The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 21+. Most arguments provided are to set Java 8 defaults closer to Java 21+ defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_ARGS` with the below ones if you want to use them.

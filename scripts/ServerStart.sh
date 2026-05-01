@@ -186,18 +186,17 @@ function reinstall_loader {
         fi
         local source
         if [[ $useCleanroom == true ]]; then
-            # If the format changes this URL might need to be changed
-            source="https://github.com/CleanroomMC/Cleanroom/releases/download/$loaderVer/cleanroom-$loaderVer-installer.jar"
+            source="https://repo.cleanroommc.com/releases/com/cleanroommc/cleanroom/$loaderVer/cleanroom-$loaderVer-installer.jar"
         else
-            # Hard coded, Forge shouldn't change
-            source='https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2860/forge-1.12.2-14.23.5.2860-installer.jar'
+            source="https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-$loaderVer/forge-1.12.2-$loaderVer-installer.jar"
         fi
         # Check for commands, then do the download
+        echo -e "${YELLOW}Downloading $loaderName installer...${RESET}"
         if (command -v curl >> /dev/null 2>&1); then
-            write_to_log "DEBUG: (curl) Downloading $source"
+            write_to_log "DEBUG: (curl) Downloading $loaderName installer from $source"
             curl -L "$source" -o "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
         elif (command -v wget >> /dev/null 2>&1); then
-            write_to_log "DEBUG: (wget) Downloading ${source}"
+            write_to_log "DEBUG: (wget) Downloading $loaderName installer from $source"
             wget "$source" -O "${scriptRoot}installer-$loaderName-$loaderVer.jar" >> "${scriptRoot}logs/serverstart.log" 2>&1
         else
             echo -e "${RED}Neither wget or curl were found on your system. Please install one and try again${RESET}"

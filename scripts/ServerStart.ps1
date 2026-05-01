@@ -178,13 +178,13 @@ function ReinstallLoader {
         Import-Module BitsTransfer
         $source = $null
         if ($useCleanroom) {
-            # If the format changes this URL might need to be changed
-            $source = "https://github.com/CleanroomMC/Cleanroom/releases/download/$($LOADER_VER)/cleanroom-$($LOADER_VER)-installer.jar"
+            $source = "https://repo.cleanroommc.com/releases/com/cleanroommc/cleanroom/$($LOADER_VER)/cleanroom-$($LOADER_VER)-installer.jar"
         }
         else {
-            # Hard coded, Forge shouldn't change
-            $source = "https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2860/forge-1.12.2-14.23.5.2860-installer.jar"
+            $source = "https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-$($LOADER_VER)/forge-1.12.2-$($LOADER_VER)-installer.jar"
         }
+        Write-Host "Downloading $($LOADER_NAME) installer..." -ForegroundColor Yellow
+        WriteToLog "INFO: Downloading $($LOADER_NAME) installer from $($source)"
         Start-BitsTransfer -Source $source -Destination $PSScriptRoot/"installer-$($LOADER_NAME)-$($LOADER_VER).jar"
         Get-BitsTransfer | Complete-BitsTransfer
     }

@@ -192,9 +192,9 @@ function ReinstallLoader {
     if (-not (Test-Path $PSScriptRoot/"server.properties")) {
         Write-Host "Could not find server.properties, creating initial copy..."
         WriteToLog "INFO: server.properties not found... populating default"
-        Write-Output "view-distance=8",
+        Write-Output "view-distance=10",
             "allow-flight=true",
-            "enable-command-block=false",
+            "enable-command-block=true",
             "level-type=$($settings["DEFAULT_WORLD_TYPE"])",
             "snooper-enabled=false",
             "max-tick-time=90000",

@@ -210,9 +210,9 @@ function reinstall_loader {
         echo 'Could not find server.properties, creating initial copy...'
         write_to_log 'INFO: server.properties not found... populating default'
         {
-            echo "view-distance=8",
+            echo "view-distance=10",
             echo "allow-flight=true",
-            echo "enable-command-block=false",
+            echo "enable-command-block=true",
             echo "level-type=${settings["DEFAULT_WORLD_TYPE"]}",
             echo "snooper-enabled=false",
             echo "max-tick-time=90000",

@@ -50,7 +50,7 @@ Formatting is very important for it to load correctly:
 
 | Setting   | Description                | Default Value | 
 | ----------|----------------------------| :------------:|
-| **MAX_RAM**     | How much max RAM to allow the JVM to allocate to the server  | `4G` |
+| **MAX_RAM**     | How much max RAM to allow the JVM to allocate to the server  | `6G` |
 | **GAME_ARGS**   | Any other args to be passed to the game, not java args. Probably shouldn't add anything here, but can remove `nogui` if you really want the vanilla server panel. | `nogui` |
 | **JAVA_ARGS**   | The defaults provided are meant to be as general as possible so they can work on both Java 8 and Java 21+, but can be edited if desired | *See Below* |
 | **USE_CLEANROOM** | Set to `true` if you want to use Cleanroom Loader. `false` is to use Forge, as usual. | `false` |

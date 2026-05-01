@@ -67,7 +67,7 @@ Formatting is very important for it to load correctly:
 ## Optional Java Arguments
 The default java arguments (using G1GC) are meant to be as general as possible to allow running on both Java 8 and Java 21+. Most arguments provided are to set Java 8 defaults closer to Java 21+ defaults, while some of the other ones seem to be generally good to have. Below are some alternative options that may (or may not!) help with performance. Replace the args in `JAVA_ARGS` with the below ones if you want to use them.
 
-**Please keep in mind** that java arguments are **not** what mainly determines your performance (especially for Java 8); optimization mods are! Check out the [Opticraft page](https://red-studio-ragnarok.github.io/Opticraft/) for generally good optimization mods for 1.12.2. Arguments are hard to test correctly, so don't expect much, if any, performance improvements from changing them!
+**Please keep in mind** that java arguments are **not** what mainly determines your performance (especially for Java 8); optimization mods are! Check Cleanroom's ["Preparing Your Modpack"](https://cleanroommc.com/wiki/end-user-guide/preparing-your-modpack) page and considering using the mod [PackCompanion](https://www.curseforge.com/minecraft/mc-mods/packcompanion) for guidance on optimzation mods. Arguments are hard to test correctly, so don't expect much, if any, performance improvements from changing them!
 
 Default option:
 ```
@@ -82,13 +82,13 @@ This is a list made from this [repo](https://github.com/brucethemoose/Minecraft-
 
 **Instead of using Java 8/Forge, I would recommend using Cleanroom to benefit from modern Java versions (21/25+).**
 
-### Java 21 or higher
+### Java 21~23
 ```
 -XX:+UnlockExperimentalVMOptions -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:+UseZGC -XX:+ZGenerational -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
 Uses the (generational) ZGC garbage collector. This is generally better if you have more CPU cores and RAM to spare. If you are especially constrained by either, G1GC/the default args may be better.
 
-### Java 25
+### Java 25 or higher
 This section has arguments similar to Java 21, but enables a new feature officially shipped in Java 25, [Compact Object Headers](https://openjdk.org/jeps/450), which should noticeably reduce memory usage.
 
 Option 1:
@@ -105,5 +105,5 @@ Uses the default G1GC garbage collector.
 
 ### More resources:
 Cleanroom Java Arguments: https://cleanroommc.com/wiki/end-user-guide/args  
-Article on JVM Arguments: https://exa.y2k.diy/garden/jvm-args/
+Article on JVM Arguments: https://exa.y2k.diy/garden/jvm-args/  
 Another article on modern Java Arguments (ZGC focused): https://github.com/Obydux/Minecraft-startup-flags

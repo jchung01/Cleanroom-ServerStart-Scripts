@@ -68,50 +68,39 @@ The default java arguments (using G1GC) are meant to be as general as possible t
 
 Default option:
 ```
--server -XX:+UnlockExperimentalVMOptions -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:+UseG1GC -XX:MaxGCPauseMillis=130 -XX:G1HeapRegionSize=8M -XX:G1NewSizePercent=28 -XX:ConcGCThreads=2 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+-server -XX:+UnlockExperimentalVMOptions -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:G1HeapRegionSize=8M -XX:G1NewSizePercent=28 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
 
 ### Java 8
-Option 1:
-``` 
--server -XX:+AggressiveOpts -XX:ParallelGCThreads=3 -XX:+UseConcMarkSweepGC -XX:+UnlockExperimentalVMOptions -XX:+UseParNewGC -XX:+ExplicitGCInvokesConcurrent -XX:MaxGCPauseMillis=10 -XX:GCPauseIntervalMillis=50 -XX:+UseFastAccessorMethods -XX:+OptimizeStringConcat -XX:NewSize=84m -XX:+UseAdaptiveGCBoundary -XX:NewRatio=3 -Dfml.readTimeout=90 -Dfml.queryResult=confirm 
 ```
-This is what's provided by the AllTheMods server scripts. It uses the ParNew/CMS garbage collectors, which are the default ones used by MC in Java 8.  
+-server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:MaxInlineLevel=15 -XX:MaxVectorSize=32 -XX:+UseCompressedOops -XX:ThreadPriorityPolicy=1 -XX:+UseDynamicNumberOfGCThreads -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=350M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseFPUForSpilling -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=28 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=3 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+```
+This is a list made from this [repo](https://github.com/brucethemoose/Minecraft-Performance-Flags-Benchmarks/tree/main#java-8). It uses G1GC, like the default set of args, with a modified set of [Aikar's flags](https://docs.papermc.io/paper/aikars-flags/) and has more fine-tuning args that **are untested**, so take these with a grain of salt.
 
-Option 2:
-```
--server -XX:+UnlockExperimentalVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+AlwaysActAsServerClassMachine -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:+AggressiveOpts -XX:+UseFastAccessorMethods -XX:MaxInlineLevel=15 -XX:MaxVectorSize=32 -XX:+UseCompressedOops -XX:ThreadPriorityPolicy=1 -XX:+UseDynamicNumberOfGCThreads -XX:NmethodSweepActivity=1 -XX:ReservedCodeCacheSize=350M -XX:-DontCompileHugeMethods -XX:MaxNodeLimit=240000 -XX:NodeLimitFudgeFactor=8000 -XX:+UseFPUForSpilling -XX:+UseG1GC -XX:MaxGCPauseMillis=130 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=28 -XX:G1HeapRegionSize=16M -XX:G1ReservePercent=20 -XX:G1MixedGCCountTarget=3 -XX:InitiatingHeapOccupancyPercent=10 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=0 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -XX:G1SATBBufferEnqueueingThresholdPercent=30 -XX:G1ConcRefinementServiceIntervalMillis=150 -XX:G1ConcRSHotCardLimit=16 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
-```
-This is a list made from this [repo](https://github.com/Mukul1127/Minecraft-Performance-Flags-Benchmarks/tree/main). It uses G1GC, like the default set of args, with [Aikar's well-known server arguments](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/) but it has more fine-tuning args that **are untested**, so take these with a grain of salt.
+**Instead of using Java 8/Forge, I would recommend using Cleanroom to benefit from modern Java versions (21/25+).**
 
 ### Java 21 or higher
-Option 1:
 ```
--XX:+UnlockExperimentalVMOptions -XX:+AlwaysPreTouch -XX:+UseZGC -XX:+ZGenerational -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+-XX:+UnlockExperimentalVMOptions -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:+UseZGC -XX:+ZGenerational -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
-Uses the new (generational) ZGC garbage collector. This may give you better performance, but you may need to allocate more RAM to see such an improvement. I would suggest trying this one out for yourself with varying RAM to see how it compares to the default args.
-
-Option 2:
-```
--XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:MaxGCPauseMillis=130 -XX:G1HeapRegionSize=8M -XX:G1NewSizePercent=28 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
-```
-Simplified version of Java 8's option 2, so same warnings apply.
+Uses the (generational) ZGC garbage collector. This is generally better if you have more CPU cores and RAM to spare. If you are especially constrained by either, G1GC/the default args may be better.
 
 ### Java 25
 This section has arguments similar to Java 21, but enables a new feature officially shipped in Java 25, [Compact Object Headers](https://openjdk.org/jeps/450), which should noticeably reduce memory usage.
 
 Option 1:
 ```
--XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+UseZGC -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+-XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:+UseZGC -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
-Uses ZGC garbage collector. Same as Java 21 option 1, so the same note about possibly needing to allocate more RAM applies.
+Uses ZGC garbage collector (generational is now default). Same note as Java 21 about ZGC applies.
 
 Option 2:
 ```
--XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:MaxGCPauseMillis=130 -XX:G1HeapRegionSize=8M -XX:G1NewSizePercent=28 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
+-XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:G1HeapRegionSize=8M -XX:G1NewSizePercent=28 -Dfml.readTimeout=90 -Dfml.queryResult=confirm
 ```
 Uses the default G1GC garbage collector.
 
 ### More resources:
-Java 25 Arguments: https://cleanroommc.com/wiki/end-user-guide/args  
+Cleanroom Java Arguments: https://cleanroommc.com/wiki/end-user-guide/args  
 Article on JVM Arguments: https://exa.y2k.diy/garden/jvm-args/
+Another article on modern Java Arguments (ZGC focused): https://github.com/Obydux/Minecraft-startup-flags

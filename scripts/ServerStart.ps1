@@ -442,15 +442,15 @@ do {
     }
     while ($restartRun)
     $dateTimeNow = Get-Date
-    $days = ($dateTime - $dateTimeNow).TotalDays
-    $secs = ($dateTime - $dateTimeNow).TotalSeconds
+    $days = ($dateTimeNow - $dateTime).TotalDays
+    $secs = ($dateTimeNow - $dateTime).TotalSeconds
     $stopCounter += 1
     Write-Host "Server started at $($dateTime) has stopped at $($dateTimeNow)."
     WriteToLog "ERROR: Server started at $($dateTime) has stopped at $($dateTimeNow)."
     Write-Host "Server has $($stopCounter) consecutive stops, each within $($CRASH_TIMER) seconds of each other...`n"
     WriteToLog "DEBUG: Server has $($stopCounter) consecutive stops, each within $($CRASH_TIMER) seconds of each other..."
     # Reset if it's been a day
-    if ($days -gt 0) {
+    if ([math]::floor($days) -gt 0) {
         Write-Host 'More than one day since last crash/restart... resetting counter/timer'
         WriteToLog 'INFO: More than one day since last crash/restart... resetting counter/timer'
         $dateTime = $dateTimeNow
@@ -458,8 +458,8 @@ do {
     }
     # Reset if crash timer from config was exceeded
     elseif ($secs -gt $CRASH_TIMER) {
-        Write-Host "Last crash/startup was $(-$secs)+ seconds ago"
-        WriteToLog "INFO: Last crash/startup was $(-$secs)+ seconds ago"
+        Write-Host "Last crash/startup was $($secs)+ seconds ago"
+        WriteToLog "INFO: Last crash/startup was $($secs)+ seconds ago"
         Write-Host "More than $($CRASH_TIMER) seconds since last crash/restart... resetting counter/timer"
         WriteToLog "INFO: More than $($CRASH_TIMER) seconds since last crash/restart... resetting counter/timer"
         $dateTime = $dateTimeNow
@@ -467,7 +467,7 @@ do {
     }
     # Exit if reached max failures
     elseif ($stopCounter -ge $settings["CRASH_COUNT"]) {
-        WriteToLog "INFO: Last crash/startup was $(-$secs)+ seconds ago"
+        WriteToLog "INFO: Last crash/startup was $($secs)+ seconds ago"
         Write-Host "`n`n===================================================" -ForegroundColor red
         Write-Host " Server has stopped/crashed too many times!" -ForegroundColor red
         Write-Host "===================================================`n" -ForegroundColor red
@@ -477,7 +477,7 @@ do {
     }
     # Under threshold of crashes, go ahead and try restart
     else {
-        WriteToLog "INFO: Last crash/startup was $(-$secs)+ seconds ago"
+        WriteToLog "INFO: Last crash/startup was $($secs)+ seconds ago"
         $dateTime = $dateTimeNow
         WriteToLog "Total consecutive crash/stops within time threshold: $($stopCounter)"
     }
